@@ -36,7 +36,7 @@ class ChatHistoryService:
             
         try:
             import requests
-            timeout = 5  # 5 second timeout
+            timeout = 10  # 10 second timeout
             if method.upper() == "POST":
                 response = requests.post(url, headers=headers, json=data, timeout=timeout)
                 if response.status_code in [200, 201]:
