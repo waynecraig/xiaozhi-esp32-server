@@ -23,3 +23,8 @@ manager-api:
   url: http://127.0.0.1:8002/xiaozhi
   # 你的manager-api的token，就是刚才复制出来的server.secret
   secret: 你的server.secret值
+chat-history-server:
+  # 你的chat-history-server的地址
+  url: http://127.0.0.1:8004
+  # 你的chat-history-server的secret，用于生成JWT token
+  secret: 你的chat-history-server.secret值

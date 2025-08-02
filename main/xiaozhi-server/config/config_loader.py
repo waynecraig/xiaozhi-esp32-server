@@ -68,6 +68,13 @@ def get_config_from_api(config):
             "vision_explain": config["server"].get("vision_explain", ""),
             "auth_key": config["server"].get("auth_key", ""),
         }
+    
+    if config.get("chat-history-server"):
+        config_data["chat-history-server"] = {
+            "url": config["chat-history-server"].get("url", ""),
+            "secret": config["chat-history-server"].get("secret", ""),
+        }
+
     return config_data
 
 

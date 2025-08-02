@@ -40,6 +40,7 @@ from config.manage_api_client import DeviceNotFoundException, DeviceBindExceptio
 from core.utils.prompt_manager import PromptManager
 from core.utils.voiceprint_provider import VoiceprintProvider
 from core.utils import textUtils
+from core.utils.chat_history_queue import enqueue_chat_message, enqueue_chat_end
 
 TAG = __name__
 
@@ -914,6 +915,13 @@ class ConnectionHandler:
         try:
             # 执行上报（传入二进制数据）
             report(self, type, text, audio_data, report_time)
+            
+            # 同时上报到聊天历史服务
+            if self.device_id and text:
+                if type == 1:  # ASR - user message
+                    enqueue_chat_message(self.device_id, "user", text)
+                elif type == 2:  # TTS - assistant message
+                    enqueue_chat_message(self.device_id, "assistant", text)
         except Exception as e:
             self.logger.bind(tag=TAG).error(f"上报处理异常: {e}")
         finally:
@@ -990,6 +998,10 @@ class ConnectionHandler:
 
             if self.tts:
                 await self.tts.close()
+
+            # Report chat session end to chat history service
+            if self.device_id:
+                enqueue_chat_end(self.device_id)
 
             # 最后关闭线程池（避免阻塞）
             if self.executor:

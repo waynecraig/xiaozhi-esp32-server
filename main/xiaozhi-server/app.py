@@ -9,6 +9,7 @@ from core.utils.util import get_local_ip, validate_mcp_endpoint
 from core.http_server import SimpleHttpServer
 from core.websocket_server import WebSocketServer
 from core.utils.util import check_ffmpeg_installed
+from core.utils.chat_history_queue import get_chat_history_queue
 
 TAG = __name__
 logger = setup_logging()
@@ -53,6 +54,9 @@ async def main():
     if not auth_key or len(auth_key) == 0 or "你" in auth_key:
         auth_key = str(uuid.uuid4().hex)
     config["server"]["auth_key"] = auth_key
+
+    # 初始化全局聊天历史队列
+    get_chat_history_queue(config)
 
     # 添加 stdin 监控任务
     stdin_task = asyncio.create_task(monitor_stdin())

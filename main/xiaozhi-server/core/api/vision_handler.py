@@ -6,6 +6,7 @@ from core.utils.util import get_vision_url, is_valid_image_file
 from core.utils.vllm import create_instance
 from config.config_loader import get_private_config_from_api
 from core.utils.auth import AuthToken
+from core.utils.chat_history_queue import enqueue_chat_message
 import base64
 from typing import Tuple, Optional
 from plugins_func.register import Action
@@ -120,6 +121,11 @@ class VisionHandler:
             )
 
             result = vllm.response(question, image_base64)
+
+            # Report vision analysis to chat history service via global queue
+            if device_id:
+                # Report user message with image
+                enqueue_chat_message(device_id, "user", question, image_base64)
 
             return_json = {
                 "success": True,
